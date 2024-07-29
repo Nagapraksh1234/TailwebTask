@@ -1,0 +1,31 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 10px 20px;
+    color: #512da8;
+    height: 50px;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(81, 45, 168, 0.5);
+}
+
+.navbar-left .logo {
+    height: 40px;
+}
+
+.navbar-right a, .navbar-right .username {
+    color: #512da8;
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: bold;
+}
+
+.navbar-right a:hover, .navbar-right .username:hover {
+    text-decoration: underline;
+}

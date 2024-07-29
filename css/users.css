@@ -194,3 +194,11 @@ body{
 .container.active .toggle-right{
     transform: translateX(200%);
 }
+
+#lottie {
+    width: 700px;
+    height: 700px;
+    margin: 0 auto;
+    padding-left: 350px;
+    padding-bottom: 200px;
+}
