@@ -15,13 +15,13 @@ try {
     $input = json_decode(file_get_contents('php://input'), true);
     error_log('Input: ' . print_r($input, true));
 
-    // $name = $input['name'] ?? null;
-    // $username = $input['username'] ?? null;
-    // $password = $input['password'] ?? null;
+    $name = $input['name'] ?? null;
+    $username = $input['username'] ?? null;
+    $password = $input['password'] ?? null;
     $mode = $input['mode'] ?? 'SIGN_IN';
-    $username = 'nagaprakashnagu1234@gmail.com';
-    $password = 'nagu2016';
-    $name = 'Nagaprakash k c';
+    // $username = 'nagaprakashnagu1234@gmail.com';
+    // $password = 'nagu2016';
+    // $name = 'Nagaprakash k c';
 
     $userObject = new Users();
     $userObject->username = $username;
