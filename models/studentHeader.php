@@ -97,14 +97,11 @@ class StudentHeader {
             $stmt->bindParam(':student_class', $this->student_class);
             $stmt->bindParam(':section', $this->section);
             $stmt->bindPARAM(':total_marks',$this->total_marks);
+            $stmt->execute();
 
-
-    
-            if ($stmt->execute()) {
-                echo "New record created successfully";
-            } else {
-                echo "Error: Unable to execute the statement";
-            }
+            return 'SUCCESS';
+                
+          
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();
         }
@@ -112,6 +109,37 @@ class StudentHeader {
         return 'SUCCESS';
     
     }
+
+
+    public function updateStudentHeader($studentHeader) {
+        $db = pdoConnect();
+    
+        $sql_update = "UPDATE tw_students_header
+                       SET student_name = :student_name, 
+                           student_class = :student_class, 
+                           section = :section, 
+                           total_marks = :total_marks
+                       WHERE student_id = :student_id";
+    
+        try {
+            $stmt = $db->prepare($sql_update);
+    
+            $stmt->bindParam(':student_id', $this->student_id);
+            $stmt->bindParam(':student_name', $this->student_name);
+            $stmt->bindParam(':student_class', $this->student_class);
+            $stmt->bindParam(':section', $this->section);
+            $stmt->bindParam(':total_marks', $this->total_marks);
+            $stmt->execute();
+    
+            return 'SUCCESS';
+    
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+        }
+    
+        return 'FAILURE';
+    }
+    
     
 
 

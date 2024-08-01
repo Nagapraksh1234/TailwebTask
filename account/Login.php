@@ -25,8 +25,7 @@ require_once('../Global/config.php');
                 <h1>Sign In</h1>
                 <input type="email" placeholder="Email" id="signin_email">
                 <input type="password" placeholder="Password" id="signin_password">
-                <a href="#">Forget Your Password?</a>
-                <button type="submit" onclick="authenticate()">Sign In</button>
+                <button type="submit" onclick="authenticate(event)">Sign In</button>
             </form>
         </div>
         <div class="toggle-container">
@@ -47,7 +46,8 @@ require_once('../Global/config.php');
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
-        function authenticate() {
+        function authenticate(event) {
+            event.preventDefault();
             var email = document.getElementById('signin_email').value;
             var password = document.getElementById('signin_password').value;
 
@@ -55,28 +55,30 @@ require_once('../Global/config.php');
             console.log('Password: ' + password);
 
             $.ajax({
-                url: '../controller/userAthenticationController.php',
-                method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    username: email,
-                    password: password,
-                    mode: 'SIGN_IN'
-                }),
-                success: function(response) {
+    url: '../controller/userAthenticationController.php',
+    method: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify({
+        username: email,
+        password: password,
+        mode: 'SIGN_IN'
+    }),
+    success: function(response) {
         console.log('Response: ', response);
         if (response.result) {
             window.location.href = '../account/home.php';
         } else {
             alert('Invalid username or password.');
         }
+
     },
-                error: function(xhr, status, error) {
-                    console.error('Error: ', error);
-                    alert('An error occurred. Please try again.');
-                }
-            });
-        }
+    error: function(xhr, status, error) {
+        console.error('Error: ', error);
+        alert('An error occurred. Please try again.');
+    }
+});
+
+}
 
         function signup() {
             var url = '../account/Signup.php';

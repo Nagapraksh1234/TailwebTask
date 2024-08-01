@@ -51,33 +51,35 @@ class Users {
 
   public function initObject($results,$Users){
 
-    $id = $results['id'];
-    $name = $results['name'];
-    $username = $results['username'];
-    $password = $results['password'];
-    $token = $results['token'];
+    $Users->id = $results['id'];
+    $Users->name = $results['name'];
+    $Users->username = $results['username'];
+    $Users->password = $results['password'];
+    $Users->token = $results['token'];
 
     return $Users;
 
   }
 
   public function getUserDetails($Users) {
-    $db = pdoConnect();
-    $username = $Users->username;
+    try {
+        $db = pdoConnect();
+        $sql = "SELECT username, password FROM tw_users WHERE username = :username";
+        $stmt = $db->prepare($sql);
+        $stmt->bindParam(':username', $Users->username);
+        $stmt->execute();
 
-    $sql = "SELECT * FROM tw_users WHERE username = :username";
-    $stmt = $db->prepare($sql);
-    $stmt->bindParam(':username', $username);
-    $stmt->execute();
-
-    if ($stmt->rowCount() > 0) {
-        $stmt->fetch();
-        return 'SUCCESS';
-    } else {
-        return false;
+        $user = $stmt->fetch();
+        if ($user && password_verify($Users->password, $user['password'])) {
+            return 'SUCCESS';
+        } else {
+            return 'FAILURE';
+        }
+    } catch (PDOException $e) {
+        error_log('Database Error: ' . $e->getMessage());
+        return 'ERROR';
     }
 }
-
 
  public function insertUsers($userObject){
     try {

@@ -8,7 +8,8 @@ $studentObject = new StudentHeader();
 $studentDetailObj = new studentDetail();
 
 $get_student_header = $studentObject->getStudentDetails();
-$get_student_details = $studentDetailObj->getStudentHeaderDetails($section,$className);
+$get_student_details = $studentDetailObj->getStudentHeaderDetails($section,$className_encoded);
+
 
 
 

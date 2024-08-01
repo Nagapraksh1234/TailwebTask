@@ -12,6 +12,8 @@ include '../initilizers/init_classes.php';
     <title>classes</title>
     <link rel="stylesheet" href="../css/classes.css">
 
+   
+
 </head>
 <body>
     <nav class="navbar">
@@ -19,8 +21,9 @@ include '../initilizers/init_classes.php';
             <img src="logo.png" alt="Logo" class="logo">
         </div>
         <div class="navbar-right">
+            <a href="../account/Home.php">Home</a>
             <a href="../account/classes.php">Classes</a>
-            <a href="#logout">Logout</a>
+            <a id="logout-link">Logout</a>
             <span class="username">Username</span>
         </div>
     </nav>
@@ -40,6 +43,27 @@ include '../initilizers/init_classes.php';
             <p>No classes available.</p>
         <?php endif; ?>
     </div>
+
+    <script>
+  document.getElementById('logout-link').addEventListener('click', function(event) {
+    event.preventDefault();
+    
+    if (confirm('Are you sure you want to log out?')) {
+      var form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '../account/Login.php'; 
+      var input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'logout';
+      form.appendChild(input);
+      
+      document.body.appendChild(form);
+      form.submit();
+    }
+  });
+</script>
+
+
 
 
 </body>

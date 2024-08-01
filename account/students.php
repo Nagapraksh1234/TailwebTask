@@ -2,7 +2,9 @@
 require_once('../Global/config.php');
 
 $section = base64_decode($_GET['section']);
-$className = base64_decode($_GET['class_name']);
+$section_uncode = $_GET['section'];
+$className = $_GET['class_name'];
+$className_encoded = base64_decode($className);
 
 include '../initilizers/init_students.php';
 
@@ -16,14 +18,10 @@ include '../initilizers/init_students.php';
     <title>Student List</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="globalfunction.js" defer></script>
 
     <style>
-        /* .body-style {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 20px;
-        background-color: #f4f4f9;
-} */
+
 .table-container {
             overflow-x: auto;
             margin: 20px 0;
@@ -88,33 +86,30 @@ include '../initilizers/init_students.php';
         .header-container button:hover {
             background-color: #3f2b7e;
         }
-        /* Modal styles */
-        /* The Modal (background) */
+       
 .modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
+    width: 100%;
     overflow: auto;
-    height: 100%; /* Full height */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    height: 100%; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.4);
 }
 
-/* Modal Content */
 .modal-content {
     background-color: #fefefe;
-    margin: 4% auto; /* 15% from the top and centered */
+    margin: 4% auto; 
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
-    max-width: 600px; /* Maximum width */
-    border-radius: 8px; /* Rounded corners */
+    width: 80%; 
+    max-width: 600px; 
+    border-radius: 8px; 
 }
 
-/* The Close Button */
 .close {
     color: #aaa;
     float: right;
@@ -149,14 +144,96 @@ include '../initilizers/init_students.php';
         .button-container {
             display: flex;
             justify-content: center;
-            margin-top: 1em; /* Optional: add space above the button */
+            margin-top: 1em; 
         }
+
+        #pagination-controls {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#pagination-controls button {
+    padding: 10px 15px;
+    margin: 0 5px;
+    border: none;
+    background-color: #512da8;
+    color: white;
+    cursor: pointer;
+}
+
+#pagination-controls button.disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 10px 20px;
+    color: #512da8;
+    height: 50px;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(81, 45, 168, 0.5);
+}
+
+.navbar-left .logo {
+    height: 40px;
+}
+
+.navbar-right a, .navbar-right .username {
+    color: #512da8;
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: bold;
+}
+
+.navbar-right a:hover, .navbar-right .username:hover {
+    text-decoration: underline;
+}.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 10px 20px;
+    color: #512da8;
+    height: 50px;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(81, 45, 168, 0.5);
+}
+
+.navbar-left .logo {
+    height: 40px;
+}
+
+.navbar-right a, .navbar-right .username {
+    color: #512da8;
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: bold;
+}
+
+.navbar-right a:hover, .navbar-right .username:hover {
+    text-decoration: underline;
+}
+
+
+  
 
     </style>
 </head>
-<body class="body-style">
-    <?php include '../account/Home.php'; ?>
-    
+<body >
+<nav class="navbar">
+        <div class="navbar-left">
+            <img  alt="Logo" class="logo">
+        </div>
+        <div class="navbar-right">
+            <a href="../account/classes.php">Classes</a>
+            <a id="logout-link">Logout</a>
+            <span class="username">Username</span>
+        </div>
+    </nav>    
     <div class="header-container">
         <h2>Student List</h2>
         <button id="openModalBtn">ADD</button>
@@ -170,10 +247,13 @@ include '../initilizers/init_students.php';
             <form>
         <div class="form-group">
             <label for="studentID">St Id:</label>
-            <input type="text" id="studentId" name="studentId">
+            <input type="text" id="studentId" name="studentId" value=" <?echo $students->stud?>">
             &nbsp; &nbsp; &nbsp; &nbsp;
             <label for="studentName">Name:</label>
             <input type="text" id="studentName" name="studentName" >
+            <input type="text" id="mode" name="mode" value="" hidden>
+
+
         </div>
         
         <div class="form-group">
@@ -213,7 +293,7 @@ include '../initilizers/init_students.php';
            
         </div>
         <div class="button-container">
-        <button onclick='save();'>SAVE</button>
+        <button onclick='saveStudent(event)'>SAVE</button>
     </div>
 
             </form>
@@ -222,7 +302,7 @@ include '../initilizers/init_students.php';
     <div class="table-container">
 
 
-    <table>
+    <table id='data-table'>
         <thead>
             <tr>
                 <th></th>
@@ -257,13 +337,26 @@ include '../initilizers/init_students.php';
             $project = $students->project_work;
             $total_marks = $students->total_marks;
 
-            echo $student_class;
-            echo $className;
+            $studentData = [
+                'student_id' => $student_id,
+                'student_name' => $student_name,
+                'student_class' => $student_class,
+                'section' => $section,
+                'lang1' => $lang1,
+                'lang2' => $lang2,
+                'lang3' => $lang3,
+                'science' => $science,
+                'maths' => $maths,
+                'social' => $social,
+                'project' => $project,
+                'total_marks' => $total_marks
+            ];
+        
+    $studentDataJson = htmlspecialchars(json_encode($studentData), ENT_QUOTES, 'UTF-8');
 
 
-            if ($className != $student_class ){
                 echo "<tr>";
-                echo '<td><button id="openModalBtn">EDIT</button></td>';
+                echo '<td><button id="openEDITModalBtn" onclick=\'openEditModal(' . $studentDataJson . ')\'>EDIT</button></td>';
                 echo "<td style='text-align:center;'>$student_id</td>";
                 echo "<td style='text-align:center;'>$student_name</td>";
                 echo "<td style='text-align:center;'>$student_class</td>";
@@ -277,18 +370,16 @@ include '../initilizers/init_students.php';
                 echo "<td style='text-align:center;'>$project</td>";
                 echo "<td style='text-align:center;'>$total_marks</td>";
                 echo "</tr>";
-            } else {
-                echo "<tr>";
-                echo "<td colspan='13' style='text-align:center;color:'black'>No Data Found</td>";
-                echo "</tr>";
-            }
+            } 
             
 
-        }
+        
         ?>
             
         </tbody>
     </table>
+    </div>
+    <div id="pagination-controls">
     </div>
 
 
@@ -314,12 +405,15 @@ include '../initilizers/init_students.php';
 
       
 
+      
+
     </script>
-    <script>
+    <script >
 
 
 
-        function save(){
+function saveStudent(event) {
+    event.preventDefault();
 
        var student_name = document.getElementById('studentName').value;
         var student_id = document.getElementById('studentId').value;
@@ -332,7 +426,17 @@ include '../initilizers/init_students.php';
         var science = document.getElementById('science').value;
         var social = document.getElementById('social').value;
         var project = document.getElementById('project').value;
+        var totalmarks = document.getElementById('marks').value;
+        var mode = document.getElementById('mode').value;
 
+         if (mode === 'UPDATE') {
+            mode = 'EDIT';
+        } else {
+          mode = 'INSERT';
+        }
+
+
+        
             $.ajax({
                 url: '../controller/studentController.php',
                 method: 'POST',
@@ -349,22 +453,31 @@ include '../initilizers/init_students.php';
                     science:science,
                     social:social,
                     project:project,
-                    mode :'INSERT'
+                    totalMarks:totalmarks,
+                    mode : mode
                 }),
+
                 success: function(response) {
-                   console.log('Response: ', response);
-                if (response.result) {
-                    window.location.href = '../account/home.php';
-                } else {
-                 alert('Invalid username or password.');
-                }
-              },
-                error: function(xhr, status, error) {
-                    console.error('Error: ', error);
-                    alert('An error occurred. Please try again.');
-                }
-            });
+        console.log('Response: ', response);
+        if (response.result) {
+             var className = "<?php echo htmlspecialchars($className, ENT_QUOTES, 'UTF-8'); ?>";
+             var section = "<?php echo htmlspecialchars($section_uncode, ENT_QUOTES, 'UTF-8'); ?>";
+
+             var url = "../account/students.php?class_name=" + encodeURIComponent(className) + "&section=" + encodeURIComponent(section);
+
+             window.location.href = url;
+        } else {
+            alert('Invalid username or password.');
         }
+    },
+    error: function(xhr, status, error) {
+        console.error('Error: ', error);
+        alert('An error occurred. Please try again.');
+    }
+               
+            });
+    }
+    
 
 
     function generateStudentId() {
@@ -397,10 +510,62 @@ include '../initilizers/init_students.php';
         }
 
 
+        function openEditModal(studentData) {
+    console.log("Student Data received:", studentData);
 
+    document.getElementById('studentId').value = studentData.student_id;
+    document.getElementById('studentName').value = studentData.student_name;
+    document.getElementById('studentClass').value = studentData.student_class;
+    document.getElementById('section').value = studentData.section;
+    document.getElementById('lang1').value = studentData.lang1;
+    document.getElementById('lang2').value = studentData.lang2;
+    document.getElementById('lang3').value = studentData.lang3;
+    document.getElementById('science').value = studentData.science;
+    document.getElementById('maths').value = studentData.maths;
+    document.getElementById('social').value = studentData.social;
+    document.getElementById('project').value = studentData.project;
+    document.getElementById('marks').value = studentData.total_marks;
+    document.getElementById('mode').value = 'UPDATE';
+    
+    document.getElementById('myModal').style.display = 'block';
 
-        
+        }
+
+    function closeModal() {
+        document.getElementById('myModal').style.display = 'none';
+    }
+    
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('myModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+
     </script>
+    <script>
+  document.getElementById('logout-link').addEventListener('click', function(event) {
+    event.preventDefault();
+    
+    if (confirm('Are you sure you want to log out?')) {
+      var form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '../account/Login.php'; 
+      var input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'logout';
+      form.appendChild(input);
+      
+      document.body.appendChild(form);
+      form.submit();
+    }
+  });
+</script>
+
+
+   
+   
 
 </body>
 </html>

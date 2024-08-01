@@ -177,16 +177,15 @@ class studentDetail {
                 $stmt->bindParam(':social', $this->social);
                 $stmt->bindParam(':project_work', $this->project_work);
     
-                if ($stmt->execute()) {
-                    echo "New record created successfully";
-                } else {
-                    echo "Error: Unable to execute the statement";
-                }
+                $stmt->execute();
+
+                    return 'SUCCESS';
+                    echo'SUCCESS';
+              
             } catch (PDOException $e) {
                 echo "Error: " . $e->getMessage();
             }
     
-            $db = null;
         }    
 
 
@@ -206,6 +205,7 @@ class studentDetail {
                     AND b.student_class = '$className';
                    ";
 
+
             $stmt = $db->prepare($sql);
             $stmt->execute();
             $details = $stmt->fetchAll(PDO::FETCH_OBJ); 
@@ -214,6 +214,44 @@ class studentDetail {
             return $details;
 
         }
+
+        public function updateStudentDetail($studentDetail) {
+            $db = pdoConnect();
+        
+            $sql_update = "UPDATE tw_students_detail
+                           SET student_name = :student_name,
+                               language_one = :language_one,
+                               language_two = :language_two,
+                               language_three = :language_three,
+                               maths = :maths,
+                               science = :science,
+                               social = :social,
+                               project_work = :project_work
+                           WHERE student_id = :student_id";
+        
+            try {
+                $stmt = $db->prepare($sql_update);
+        
+                $stmt->bindParam(':student_id', $this->student_id);
+                $stmt->bindParam(':student_name', $this->student_name);
+                $stmt->bindParam(':language_one', $this->language_one);
+                $stmt->bindParam(':language_two', $this->language_two);
+                $stmt->bindParam(':language_three', $this->language_three);
+                $stmt->bindParam(':maths', $this->maths);
+                $stmt->bindParam(':science', $this->science);
+                $stmt->bindParam(':social', $this->social);
+                $stmt->bindParam(':project_work', $this->project_work);
+        
+                $stmt->execute();
+        
+                return 'SUCCESS';
+        
+            } catch (PDOException $e) {
+                echo "Error: " . $e->getMessage();
+            }
+        
+        }
+        
     
 }
 

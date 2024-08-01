@@ -16,12 +16,11 @@ try {
     error_log('Input: ' . print_r($input, true));
 
     $name = $input['name'] ?? null;
-    $username = $input['username'] ?? null;
-    $password = $input['password'] ?? null;
+    // $username = $input['username'] ?? null;
+    // $password = $input['password'] ?? null;
+    $username = $input['username'] ?? 'yogesh@gmail.com';
+    $password = $input['password'] ?? 'yogesh2016';
     $mode = $input['mode'] ?? 'SIGN_IN';
-    // $username = 'nagaprakashnagu1234@gmail.com';
-    // $password = 'nagu2016';
-    // $name = 'Nagaprakash k c';
 
     $userObject = new Users();
     $userObject->username = $username;
@@ -31,6 +30,7 @@ try {
     if ($mode === 'INSERT') {
         $insertResponse = $userObject->insertUsers($userObject);
         error_log('Insert response: ' . print_r($insertResponse, true));
+        
         if ($insertResponse === 'SUCCESS') {
             $response = [
                 'result' => true,
@@ -46,13 +46,12 @@ try {
                 'responseText' => 'Insert failed'
             ];
         }
-    } elseif($mode === 'SIGN_IN' ) {
-        $response = $userObject->getUserDetails($userObject);
-        var_dump($response."hiiii");
-        error_log('User details: ' . print_r($response, true));
-
-        if($response === 'SUCCESS'){
-
+    } elseif ($mode === 'SIGN_IN') {
+        $signInResponse = $userObject->getUserDetails($userObject);
+    
+        error_log('User details: ' . print_r($signInResponse, true));
+        
+        if ($signInResponse === 'SUCCESS') {
             $response = [
                 'result' => true,
                 'response' => 'success',
@@ -60,15 +59,13 @@ try {
                 'additionalResponse' => '',
                 'additionalResponseText' => ''
             ];
-
-        }else{
+        } else {
             $response = [
                 'result' => false,
                 'response' => 'failure',
-                'responseText' => 'invalid usernane'
+                'responseText' => 'Invalid username or password'
             ];
         }
-        
     }
 } catch (Exception $e) {
     error_log('Error: ' . $e->getMessage());

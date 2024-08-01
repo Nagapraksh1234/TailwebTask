@@ -29,3 +29,18 @@ body {
 .navbar-right a:hover, .navbar-right .username:hover {
     text-decoration: underline;
 }
+
+.welcome-notes {
+text-align: center;
+margin: 20px;
+padding: 10px;
+background-color: rgba(255, 255, 255, 0.8);
+border-radius: 10px;
+}
+.welcome-notes h1 {
+color: #333;
+}
+.welcome-notes p {
+color: #666;
+}
+
